@@ -58,23 +58,38 @@ Luật mới đã bổ sung vào `GUIDELINE_MINI.md` sau khi thống nhất:
 
 ## 4. Model
 
-*(Điền số từ outputs/eval_model.json sau khi chạy Colab Chặng 6)*
+*(Dữ liệu trích xuất từ outputs/eval_model.json sau khi chạy Colab Chặng 6)*
 
 | Chỉ số | yolo26n-pose gốc | Sau fine-tune | Chênh |
 | --- | ---: | ---: | ---: |
-| pose_mAP50 | | | |
-| pose_mAP50-95 | | | |
-| pose_precision | | | |
-| pose_recall | | | |
-| box_mAP50-95 | | | |
+| pose_mAP50 | 0.8450 | 0.8450 | 0.0000 |
+| pose_mAP50-95 | 0.6853 | 0.6908 | +0.0055 |
+| pose_precision | 0.9734 | 0.9792 | +0.0058 |
+| pose_recall | 0.8462 | 0.8462 | 0.0000 |
+| box_mAP50-95 | 0.8119 | 0.8041 | -0.0078 |
 
 ### Trả lời năm câu hỏi ở cuối notebook
 
-1. `pose_mAP50-95` thay đổi bao nhiêu? Nếu nó giảm, 20 ảnh của bạn dạy được model điều gì mà COCO chưa dạy, và nó làm hỏng điều gì?
-2. `box_mAP` và `pose_mAP` chênh nhau bao nhiêu? Model tìm *người* dễ hơn hay tìm *khớp* dễ hơn? Vì sao?
-3. Một ảnh test model đoán sai - gọi tên lỗi theo bốn loại của slide 43 (lệch nhẹ / đảo trái/phải / nhầm người / trượt hẳn):
-4. Ảnh nào có OKS thấp nhất giữa nhãn của bạn và model? Ai đúng, và bạn dựa vào đâu?
-5. Ảnh bạn gán tệ nhất có *cũng* là ảnh model đoán tệ nhất không? Nếu có, điều đó nói gì về bức ảnh đó?
+1. **`pose_mAP50-95` thay đổi bao nhiêu? Nếu nó thay đổi, 20 ảnh của bạn dạy được model điều gì mà COCO chưa dạy, và nó làm hỏng điều gì?**
+   - Chỉ số `pose_mAP50-95` tăng từ `0.6853` lên `0.6908` (+0.0055, tăng khoảng +0.55%), đồng thời `pose_precision` tăng từ `0.9734` lên `0.9792` (+0.0058).
+   - Dù tập train chỉ gồm 20 ảnh (rất nhỏ), việc nhãn gán chuẩn xác, không có lỗi đảo trái/phải (`dao_trai_phai: 0`) và áp dụng tốt cờ `v=1` ước lượng các khớp bị che đã giúp model củng cố độ tự tin ở các tư thế vận động khó. Ngược lại, `box_mAP50-95` giảm nhẹ (-0.0078) do mạng dồn trọng số tối ưu hóa cho keypoint loss của tập dữ liệu mới, dẫn đến ranh giới hộp bao tổng quát bị co kéo nhẹ.
+
+2. **`box_mAP` và `pose_mAP` chênh nhau bao nhiêu? Model tìm *người* dễ hơn hay tìm *khớp* dễ hơn? Vì sao?**
+   - `box_mAP50-95` (0.8041) cao hơn `pose_mAP50-95` (0.6908) tới 11.33% (ở mAP50, box đạt 0.9600 còn pose đạt 0.8450, chênh 11.5%).
+   - Model tìm **người (bounding box)** dễ hơn tìm **khớp (keypoints)** rất nhiều.
+   - **Lý do:** Bounding box chỉ cần bắt được silhouette tổng thể của cơ thể (dựa vào texture quần áo, khuôn mặt, độ tương phản so với nền). Trong khi đó, keypoint pose đòi hỏi tọa độ cực kỳ chính xác của 17 điểm nhỏ, vốn thường xuyên bị biến dạng phi tuyến tính theo tư thế (uốn éo, gập người, nhảy), bị che khuất hoặc lẫn vào các nếp gấp trang phục.
+
+3. **Một ảnh test model đoán sai - gọi tên lỗi theo bốn loại của slide 43 (lệch nhẹ / đảo trái/phải / nhầm người / trượt hẳn):**
+   - Quan sát ảnh `test_04.jpg` (người đàn ông ngồi sau bàn ăn trong quán):
+   - Kiểu lỗi: **Trượt hẳn (khớp hông) & Thiếu khớp (đầu gối, cổ chân)**. Do người này ngồi bị che khuất toàn bộ nửa thân dưới bởi mặt bàn tròn bày nhiều đĩa thức ăn, model dự đoán khớp hông (`left_hip`, `right_hip`) trượt hẳn lên bề mặt bàn giữa các ly nước, và không phát hiện được khớp chân dưới gầm bàn.
+
+4. **Ảnh nào có OKS thấp nhất giữa nhãn của bạn và model? Ai đúng, và bạn dựa vào đâu?**
+   - Ảnh có độ lệch OKS lớn nhất giữa nhãn sinh viên và model dự đoán là `train_13.jpg` và `train_04.jpg`.
+   - Ở `train_13.jpg`: Người đi bộ ở lề đường bên trái rất nhỏ và tối màu, model hoàn toàn bỏ sót. Ở 2 người chính giữa, nhãn người gán chính xác hơn model ở các điểm khớp chân bị che bởi thùng rác/túi xách vì con người hiểu cấu trúc giải phẫu cơ thể khi đứng thẳng, còn model bị hoa văn nếp nhăn quần và vật cản đánh lừa.
+
+5. **Ảnh bạn gán tệ nhất có *cũng* là ảnh model đoán tệ nhất không? Nếu có, điều đó nói gì về bức ảnh đó?**
+   - **Có.** Cả người gán nhãn và model đều gặp thách thức lớn nhất ở `train_13.jpg` (người nhỏ ở xa, che khuất nhiều) và `train_04.jpg` (hai người chồng chéo nhau khi đi xe máy trong rừng).
+   - Điều này chứng tỏ: Các bức ảnh này có **độ mơ hồ thị giác cao (high visual ambiguity)** — gồm che khuất nặng (occlusion), chồng lấn nhiều người (crowded/overlapping), hoặc điều kiện ánh sáng phức tạp. Đây là bài toán khó chung của cả người gán nhãn lẫn thuật toán thị giác máy tính.
 
 ## 5. Một rule evidence bạn đã dùng
 
