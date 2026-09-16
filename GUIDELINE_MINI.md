@@ -48,6 +48,6 @@
 
 ## 4. Sau khi so visibility report với bạn cùng nhóm
 
-- Khớp lệch `%v=1` nhiều nhất: `left_ear` (bạn `68%` / họ `45%`)
-- Nguyên nhân là **guideline chưa rõ** hay **một trong hai bên gán sai**: Guideline ban đầu chưa quy định cụ thể khi nào tai bị che bởi tóc/mũ thì được tính là `v=1` hay `v=2`.
-- Luật mới bổ sung vào mục 2 sau khi thống nhất: Chỉ đánh dấu `v=2` khi nhìn thấy trọn vẹn vành tai; nếu vành tai bị tóc/mũ che lấp trên 30% diện tích thì chuyển sang `v=1` (Occluded).
+- Khớp lệch `%v=1` nhiều nhất: `______` (bạn `___%` / họ `___%`)
+- Nguyên nhân là **guideline chưa rõ** hay **một trong hai bên gán sai**:
+- Luật mới bổ sung vào mục 2 sau khi thống nhất:

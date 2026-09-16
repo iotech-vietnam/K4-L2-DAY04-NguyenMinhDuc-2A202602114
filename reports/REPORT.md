@@ -49,12 +49,12 @@ Khớp lệch `%v=1` nhiều nhất giữa hai bảng đếm:
 
 | Khớp | Bạn | Họ | Lệch | Nguyên nhân (guideline hay gán sai?) |
 | --- | ---: | ---: | ---: | --- |
-| left_ear | 68% | | | Thống nhất quy ước tai bị che bởi tóc/mũ |
-| right_ear | 46% | | | Góc nhìn nghiêng khuôn mặt |
+| | | | | |
+| | | | | |
 
 Luật mới đã bổ sung vào `GUIDELINE_MINI.md` sau khi thống nhất:
-- Với tai bị tóc/mũ che: Nếu vành tai hoặc vị trí ước lượng của tai vẫn nằm trọn trong vùng đầu/ảnh thì đánh dấu `v=1` (Occluded), không dùng `v=0`.
-- Với hông người mặc quần áo dài: Dựa trên thắt lưng hoặc nếp gấp quần tại điểm nối xương chậu để đặt chấm ước lượng với `v=1`.
+
+- 
 
 ## 4. Model
 
